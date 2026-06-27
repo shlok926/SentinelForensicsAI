@@ -57,6 +57,13 @@ st.markdown("""
         border-color: #58a6ff !important;
         color: #58a6ff !important;
     }
+    .reference-box {
+        background-color: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 10px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -139,11 +146,9 @@ with tab1:
                         
                         # 1. Processing based on media type
                         if media_type == "video":
-                            # Standard multimodal pipeline
                             res = inference_service.predict_video(temp_path)
                             st.session_state["predict_res"] = res
                             
-                            # Extract face frame crop for GradCAM
                             cap = cv2.VideoCapture(temp_path)
                             success, frame = cap.read()
                             if success:
@@ -171,7 +176,6 @@ with tab1:
                             mel_db = inference_service.audio_extractor.extract_mel_spectrogram(temp_path)
                             
                         elif media_type == "image":
-                            # Visual-only pipeline
                             frame = cv2.imread(temp_path)
                             from ai_engine.preprocessing.face_detector import FaceDetector
                             detector = FaceDetector()
@@ -194,7 +198,6 @@ with tab1:
                                     ])
                                     face_t = transform(pil_face).unsqueeze(0)
                             else:
-                                # use the whole image if no face detected
                                 cv2.imwrite(orig_face_path, frame)
                                 face_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                                 pil_face = Image.fromarray(face_rgb)
@@ -208,27 +211,23 @@ with tab1:
                             mel_db = np.zeros((128, 300), dtype=np.float32)
                             
                         elif media_type == "audio":
-                            # Audio-only pipeline
                             face_t = torch.zeros((1, 3, 224, 224))
                             dummy_img = np.zeros((224, 224, 3), dtype=np.uint8)
                             cv2.imwrite(orig_face_path, dummy_img)
                             
                             mel_db = inference_service.audio_extractor.extract_mel_spectrogram(temp_path)
 
-                        # Standardize tensors and run prediction
                         if face_t is None:
                             face_t = torch.zeros((1, 3, 224, 224))
                         
                         mel_t = torch.tensor(mel_db, dtype=torch.float32).unsqueeze(0).unsqueeze(0)
                         
-                        # Execute Late Fusion Classification Model
                         with torch.no_grad():
                             logits = lf_model(face_t, mel_t)
                             probs = torch.sigmoid(logits).item()
                             
                         is_fake = probs >= 0.5
                         
-                        # Mock breakdown weights for presentation
                         if media_type == "image":
                             details = {"visual_probability": probs, "vocal_probability": 0.0}
                         elif media_type == "audio":
@@ -242,9 +241,7 @@ with tab1:
                             "details": details
                         }
                         
-                        # 2. XAI / Spectrogram Output
                         if media_type in ["video", "image"]:
-                            # Generate Grad-CAM activation heatmap overlay
                             gradcam_out_path = os.path.join(temp_dir, "gradcam_output.png")
                             gradcam_obj.generate_heatmap(
                                 face_tensor=face_t,
@@ -256,7 +253,6 @@ with tab1:
                             if "audio_spectrogram" in st.session_state:
                                 del st.session_state["audio_spectrogram"]
                         else:
-                            # Save Mel spectrogram data for plotting
                             st.session_state["audio_spectrogram"] = mel_db
                             if "gradcam_overlay" in st.session_state:
                                 del st.session_state["gradcam_overlay"]
@@ -290,7 +286,6 @@ with tab1:
                 
             elif "audio_spectrogram" in st.session_state:
                 st.markdown("### Acoustic Analysis Signature")
-                # Plot log-Mel spectrogram using matplotlib and librosa
                 fig, ax = plt.subplots(figsize=(6, 2.8))
                 librosa.display.specshow(st.session_state["audio_spectrogram"], sr=16000, hop_length=512, x_axis='time', y_axis='mel', ax=ax, cmap='magma')
                 ax.set_title("Log-Mel Spectrogram", fontsize=10)
@@ -303,30 +298,97 @@ with tab1:
 
 # ----------------- TAB 2: RAG AGENT Chat -----------------
 with tab2:
-    st.subheader("Forensic AI Agent Chatroom")
-    st.write("Query the agent regarding dataset statistics, health reports, duplicate count, or model metrics.")
+    st.subheader("Forensic AI Agent")
+    st.write("Query the local facts base or choose a quick action to inspect system diagnostics.")
     
-    if "messages" not in st.session_state:
-        st.session_state["messages"] = [
-            {"role": "assistant", "content": "Hello. I am your Forensic RAG Assistant. You can query me regarding model performance metrics, dataset health reports, or video databases."}
-        ]
+    left_chat_col, right_ref_col = st.columns([3, 2])
+    
+    with left_chat_col:
+        # Predefined Quick Queries
+        st.markdown("**Quick Queries:**")
+        q1, q2, q3 = st.columns(3)
+        pending_query = None
+        with q1:
+            if st.button("Model Performance", use_container_width=True):
+                pending_query = "What is the model accuracy and performance metrics?"
+        with q2:
+            if st.button("Check Duplicates", use_container_width=True):
+                pending_query = "Are there any duplicate files in the dataset?"
+        with q3:
+            if st.button("Dataset Count", use_container_width=True):
+                pending_query = "How many total, real, and fake videos are there?"
+                
+        # Initialize message state
+        if "messages" not in st.session_state:
+            st.session_state["messages"] = [
+                {"role": "assistant", "content": "Hello. I am your Forensic RAG Assistant. Ask me about model metrics, dataset splits, or healthy/duplicate audit files."}
+            ]
+            
+        # Process quick action query if triggered
+        if pending_query:
+            st.session_state["messages"].append({"role": "user", "content": pending_query})
+            ans = rag_agent.answer_query(pending_query)
+            st.session_state["messages"].append({"role": "assistant", "content": ans})
+            
+        # Render message history
+        for msg in st.session_state["messages"]:
+            with st.chat_message(msg["role"]):
+                st.write(msg["content"])
+                
+        # Render standard chat input
+        user_query = st.chat_input("Enter your forensic question...")
+        if user_query:
+            st.session_state["messages"].append({"role": "user", "content": user_query})
+            with st.chat_message("user"):
+                st.write(user_query)
+                
+            with st.spinner("Retrieving database facts..."):
+                ans = rag_agent.answer_query(user_query)
+                
+            st.session_state["messages"].append({"role": "assistant", "content": ans})
+            with st.chat_message("assistant"):
+                st.write(ans)
+                
+    with right_ref_col:
+        st.markdown("### Investigative Reference Data")
         
-    for msg in st.session_state["messages"]:
-        with st.chat_message(msg["role"]):
-            st.write(msg["content"])
+        with st.expander("Model Performance Metrics"):
+            # Load and display local metrics summary
+            m_path = "results/metrics_summary.json"
+            if os.path.exists(m_path):
+                import json
+                with open(m_path, "r") as f:
+                    metrics_data = json.load(f)
+                st.markdown(f"""
+                - **Accuracy**: {metrics_data.get('accuracy', 0)*100:.2f}%
+                - **ROC-AUC**: {metrics_data.get('auc', 0):.4f}
+                - **Precision**: {metrics_data.get('precision', 0)*100:.2f}%
+                - **Recall**: {metrics_data.get('recall', 0)*100:.2f}%
+                """)
+            else:
+                st.info("Metrics data not found. Please run evaluate.py first.")
+                
+        with st.expander("Dataset Configuration"):
+            # Display dataset stats
+            st.markdown("""
+            - **Dataset Name**: Google Deepfake Detection (DFD)
+            - **Total Videos**: 395 
+            - **Real Videos**: 380
+            - **Fake Videos**: 15
+            - **Aligned Crop/Mel Pairs**: 12,877
+            - **Data Splits**: 70% Train, 20% Val, 10% Test
+            """)
             
-    user_query = st.chat_input("Ask a question about the dataset or model metrics...")
-    if user_query:
-        st.session_state["messages"].append({"role": "user", "content": user_query})
-        with st.chat_message("user"):
-            st.write(user_query)
-            
-        with st.spinner("Retrieving facts..."):
-            ans = rag_agent.answer_query(user_query)
-            
-        st.session_state["messages"].append({"role": "assistant", "content": ans})
-        with st.chat_message("assistant"):
-            st.write(ans)
+        with st.expander("Dataset Health Snippet"):
+            health_md_path = "storage/reports/dataset_deepfake_detection_health.md"
+            if os.path.exists(health_md_path):
+                with open(health_md_path, "r", encoding="utf-8") as f:
+                    lines = f.readlines()
+                # show first 12 lines for a clean reference snippet
+                snippet = "".join(lines[:12])
+                st.markdown(snippet + "\n...")
+            else:
+                st.info("Health report not found.")
 
 # ----------------- TAB 3: DATASET & PERFORMANCE -----------------
 with tab3:
