@@ -160,3 +160,47 @@ This project is a localized forensic analysis workstation. The following securit
 2. **In-Memory GPU Queueing (Deferred P1):** Heavy CNN models run inference in the request thread. For high-volume concurrent scans, integrate a task broker like Celery or RQ to handle job queues and avoid API event-loop blockages.
 3. **MIME-Type Checks (Deferred P1):** Uploads are validated by filename extension. For network-facing endpoints, add Python-Magic checks to inspect file headers directly.
 4. **Argon2id Upgrade (Deferred P2):** Password hashing is implemented via PBKDF2-HMAC-SHA256 with 100,000 iterations. In multi-user setups, migrate `app/utils/crypto.py` to `argon2-cffi` to maximize brute-force resistance.
+
+---
+
+## 🤝 Contributing & Feedback
+
+Contributions, suggestions, and feedback are highly welcome!
+* **Got suggestions or feature requests?** Feel free to open a new Issue or share your ideas.
+* **Want to contribute?** Feel free to fork this repository, make your changes, and submit a Pull Request.
+
+---
+
+## ⭐ Show Your Support
+
+**Love this tool? Help us grow:**
+* 🌟 **Star the repository** on GitHub.
+* 🐛 **Report bugs** via GitHub Issues.
+* 💡 **Suggest features** or start discussions.
+* 📢 **Share with others** on LinkedIn/Twitter.
+
+---
+
+## 👤 Author & Contact
+
+<p align="center">
+  <b>👤 Shlok Thorat</b><br>
+  <i>Let's connect on LinkedIn, collaborate, and build amazing things together!</i>
+</p>
+
+<p align="center">
+  <a href="mailto:shlokthorat29075@gmail.com">
+    <img src="https://img.shields.io/badge/Email-shlokthorat29075%40gmail.com-D14836?style=flat-square&logo=gmail&logoColor=white" alt="Email" />
+  </a>
+  <a href="https://github.com/shlok926">
+    <img src="https://img.shields.io/badge/GitHub-%40shlok926-181717?style=flat-square&logo=github&logoColor=white" alt="GitHub" />
+  </a>
+  <a href="https://www.linkedin.com/in/shlok-thorat-39916a405">
+    <img src="https://img.shields.io/badge/LinkedIn-shlok--thorat--39916a405-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="LinkedIn" />
+  </a>
+</p>
+
+<p align="center">
+  Made with 🛡️ for Digital Forensics Excellence • <a href="#-sentinelforensicsai">Back to Top</a>
+</p>
+
