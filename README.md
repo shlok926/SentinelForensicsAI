@@ -36,12 +36,13 @@
 
 ## 📋 Table of Contents
 
-- [🎯 Key Features at a Glance](#-key-features-at-a-glance)
-- [🏛️ Platform Architecture Overview](#%EF%B8%8F-platform-architecture-overview)
-- [📖 Documentation Center](#-documentation-center)
-- [📂 Project Structure](#-project-structure)
-- [🚀 Quick Start](#-quick-start)
-- [🛡️ Security Roadmap \& Known Gaps](#-security-roadmap--known-gaps)
+| | |
+| :--- | :--- |
+| **1.** [Key Features](#-key-features-at-a-glance) | **6.** [Security Roadmap](#-security-roadmap--known-gaps) |
+| **2.** [Architecture Overview](#%EF%B8%8F-platform-architecture-overview) | **7.** [Contributing](#-contributing--feedback) |
+| **3.** [Documentation Docs](#-documentation-center) | **8.** [Show Your Support](#-show-your-support) |
+| **4.** [Repository Structure](#-project-structure) | **9.** [Author & Contact](#-author--contact) |
+| **5.** [Quickstart](#-quick-start) | |
 
 ---
 
