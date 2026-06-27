@@ -11,7 +11,7 @@ from app.utils.logging import setup_logger, get_request_logger, get_system_logge
 from app.database.connection import Base, engine
 
 # Import Routers
-from app.routes import health, upload, predict, report, history, models
+from app.routes import health, upload, predict, report, history, models, agent
 
 # Setup specialized loggers
 system_logger = get_system_logger()
@@ -114,3 +114,4 @@ app.include_router(predict.router)
 app.include_router(report.router)
 app.include_router(history.router)
 app.include_router(models.router)
+app.include_router(agent.router)
