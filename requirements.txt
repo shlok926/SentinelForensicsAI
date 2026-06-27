@@ -1,0 +1,16 @@
+tensorflow
+keras
+torch
+torchvision
+torchaudio
+opencv-python
+librosa
+facenet-pytorch
+mtcnn
+streamlit
+pandas
+numpy
+matplotlib
+scikit-learn
+ffmpeg-python
+moviepy
