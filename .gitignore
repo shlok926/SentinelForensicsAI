@@ -72,3 +72,16 @@ Thumbs.db
 # Local dataset binaries ignore
 deepfake_detection/
 !deepfake_detection/data/metadata.csv
+
+# Ignore stray media files at the root
+/*.mp4
+/*.avi
+/*.mov
+/*.mkv
+/*.zip
+/*.tar.gz
+/*.tgz
+/extracted_frames/
+/face_crops/
+/audio_data/
+/tmp*
