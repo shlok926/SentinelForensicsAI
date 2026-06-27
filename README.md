@@ -62,40 +62,40 @@ graph TD
     
     subgraph UI [Streamlit Forensic Workstation UI]
         direction TB
-        Tab1[Analysis Hub: Upload & Grad-CAM Visualization]
-        Tab2[Dataset & Performance Registry Dashboard]
-        Tab3[Interactive Forensic RAG Chat Interface]
+        Tab1["Analysis Hub: Upload & Grad-CAM Visualization"]
+        Tab2["Dataset & Performance Registry Dashboard"]
+        Tab3["Interactive Forensic RAG Chat Interface"]
     end
     class UI ui;
 
     subgraph Gateway [FastAPI Gateway & Security Middleware]
         direction TB
-        RoutePredict[/predict endpoint]
-        RouteAgent[/agent/query endpoint]
-        Middleware[Input Validation & Prompt Shield]
+        RoutePredict["/predict endpoint"]
+        RouteAgent["/agent/query endpoint"]
+        Middleware["Input Validation & Prompt Shield"]
     end
     class Gateway gateway;
 
     subgraph Core [Multimodal Late Fusion Engine]
         direction TB
         subgraph Video [Video Branch]
-            V1[OpenCV Frame & MTCNN Face Cropping] --> V2[ResNet-18 Deep Feature Extractor]
+            V1["OpenCV Frame & MTCNN Face Cropping"] --> V2["ResNet-18 Deep Feature Extractor"]
         end
         subgraph Audio [Audio Branch]
-            A1[Librosa Mel-Spectrogram Extraction] --> A2[2D CNN Audio Feature Extractor]
+            A1["Librosa Mel-Spectrogram Extraction"] --> A2["2D CNN Audio Feature Extractor"]
         end
-        Video --> Fusion[Late Fusion Concatenation Layer]
+        Video --> Fusion["Late Fusion Concatenation Layer"]
         Audio --> Fusion
-        Fusion --> Classifier[BCE Sigmoid Classifier - Threshold 0.2]
-        Classifier --> XAI[Grad-CAM Heatmap Visualizer]
+        Fusion --> Classifier["BCE Sigmoid Classifier - Threshold 0.2"]
+        Classifier --> XAI["Grad-CAM Heatmap Visualizer"]
     end
     class Core core;
 
     subgraph RAG [Offline Forensic RAG Agent]
         direction TB
-        KB[200+ Curated Offline Knowledge Base Queries]
-        Vec[TF-IDF Vectorizer & Cosine Similarity]
-        Fallback[Dynamic File Parser: SQLite / metadata.csv]
+        KB["200+ Curated Offline Knowledge Base Queries"]
+        Vec["TF-IDF Vectorizer & Cosine Similarity"]
+        Fallback["Dynamic File Parser: SQLite / metadata.csv"]
         Vec --> KB
         Vec --> Fallback
     end
@@ -103,8 +103,8 @@ graph TD
 
     subgraph Storage [Data & Storage Layer]
         direction TB
-        SQLite[(SQLite DB: Users, Prediction Logs, Reports)]
-        Disk[(Local Disk Cache: face_crops/, audio_data/, checkpoints/)]
+        SQLite[("SQLite DB: Users, Prediction Logs, Reports")]
+        Disk[("Local Disk Cache: face_crops/, audio_data/, checkpoints/")]
     end
     class Storage db;
 
