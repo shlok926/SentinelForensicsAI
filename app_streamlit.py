@@ -96,7 +96,7 @@ inference_service = InferenceService()
 rag_agent = ForensicRAGAgent()
 
 # ----------------- TABS -----------------
-tab1, tab2, tab3 = st.tabs(["Analysis Hub", "Forensic RAG Agent", "Dataset & Performance"])
+tab1, tab2, tab3 = st.tabs(["Analysis Hub", "Dataset & Performance", "Forensic RAG Agent"])
 
 # ----------------- TAB 1: ANALYSIS HUB -----------------
 with tab1:
@@ -296,8 +296,39 @@ with tab1:
         else:
             st.info("Run forensic inference to display results.")
 
-# ----------------- TAB 2: RAG AGENT Chat -----------------
+# ----------------- TAB 2: DATASET & PERFORMANCE -----------------
 with tab2:
+    st.subheader("Evaluation Curves and Dataset Diagnostics")
+    
+    col_a, col_b = st.columns(2)
+    
+    with col_a:
+        st.write("**Confusion Matrix**")
+        cm_path = "results/confusion_matrix.png"
+        if os.path.exists(cm_path):
+            st.image(cm_path, caption="True vs. Predicted spoofing label counts", use_container_width=True)
+        else:
+            st.info("Confusion matrix plot not found at results/confusion_matrix.png.")
+            
+    with col_b:
+        st.write("**ROC Curve (Separation Power)**")
+        roc_path = "results/roc_curve.png"
+        if os.path.exists(roc_path):
+            st.image(roc_path, caption="True Positive Rate vs False Positive Rate Curve (AUC = 0.95)", use_container_width=True)
+        else:
+            st.info("ROC-AUC plot not found at results/roc_curve.png.")
+
+    st.markdown("---")
+    st.write("**Dataset Health Audit Findings**")
+    health_md_path = "storage/reports/dataset_deepfake_detection_health.md"
+    if os.path.exists(health_md_path):
+        with open(health_md_path, "r", encoding="utf-8") as f:
+            st.markdown(f.read())
+    else:
+        st.info("Dataset health report markdown file not found.")
+
+# ----------------- TAB 3: FORENSIC RAG AGENT Chat -----------------
+with tab3:
     st.subheader("Forensic AI Agent")
     st.write("Query the local facts base or choose a quick action to inspect system diagnostics.")
     
@@ -390,33 +421,3 @@ with tab2:
             else:
                 st.info("Health report not found.")
 
-# ----------------- TAB 3: DATASET & PERFORMANCE -----------------
-with tab3:
-    st.subheader("Evaluation Curves and Dataset Diagnostics")
-    
-    col_a, col_b = st.columns(2)
-    
-    with col_a:
-        st.write("**Confusion Matrix**")
-        cm_path = "results/confusion_matrix.png"
-        if os.path.exists(cm_path):
-            st.image(cm_path, caption="True vs. Predicted spoofing label counts", use_container_width=True)
-        else:
-            st.info("Confusion matrix plot not found at results/confusion_matrix.png.")
-            
-    with col_b:
-        st.write("**ROC Curve (Separation Power)**")
-        roc_path = "results/roc_curve.png"
-        if os.path.exists(roc_path):
-            st.image(roc_path, caption="True Positive Rate vs False Positive Rate Curve (AUC = 0.95)", use_container_width=True)
-        else:
-            st.info("ROC-AUC plot not found at results/roc_curve.png.")
-
-    st.markdown("---")
-    st.write("**Dataset Health Audit Findings**")
-    health_md_path = "storage/reports/dataset_deepfake_detection_health.md"
-    if os.path.exists(health_md_path):
-        with open(health_md_path, "r", encoding="utf-8") as f:
-            st.markdown(f.read())
-    else:
-        st.info("Dataset health report markdown file not found.")
