@@ -54,7 +54,7 @@ ENV DEBUG=False
 ENV PYTHONUNBUFFERED=1
 
 # Expose API and Prometheus metrics ports
-EXpose 8000
+EXPOSE 8000
 
 # Start server using Uvicorn worker bound to FastAPI
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
