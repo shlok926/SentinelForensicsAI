@@ -1,4 +1,5 @@
 import time
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,12 +29,12 @@ try:
 except Exception as e:
     system_logger.critical(f"Failed to bootstrap database schemas: {e}")
 
-from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     system_logger.info(f"Platform successfully started in [{settings.ENV}] environment.")
     yield
+
 
 # 2. Setup ASGI App
 app = FastAPI(
