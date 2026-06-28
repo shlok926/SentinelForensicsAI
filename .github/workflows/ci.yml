@@ -54,7 +54,7 @@ jobs:
 
     - name: Run Pytest Suites
       run: |
-        pytest tests/ --cov=app --cov-report=xml
+        python -m pytest tests/ --cov=app --cov-report=xml
 
   docker-build-test:
     runs-on: ubuntu-latest
