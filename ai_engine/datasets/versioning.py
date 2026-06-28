@@ -2,7 +2,7 @@ import json
 import logging
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from ai_engine.datasets.registry import DatasetRegistry
@@ -95,7 +95,7 @@ class DatasetVersionManager:
         version_meta = {
             "version_id": next_ver,
             "dataset_id": dataset_id,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "base_dataset_info": {"name": meta.name, "version": meta.version, "modality": meta.modality},
             "preprocessing_parameters": preprocessing_config,
             "reproducibility": {

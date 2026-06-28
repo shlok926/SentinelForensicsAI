@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -23,7 +23,7 @@ def get_available_models(db: Session = Depends(get_db)):
             version="1.0.0",
             status="active",
             accuracy=0.887,
-            last_updated=datetime.utcnow(),
+            last_updated=datetime.now(timezone.utc),
         ),
         ModelRegistryItem(
             model_id=2,
@@ -31,7 +31,7 @@ def get_available_models(db: Session = Depends(get_db)):
             version="1.0.0",
             status="active",
             accuracy=0.912,
-            last_updated=datetime.utcnow(),
+            last_updated=datetime.now(timezone.utc),
         ),
         ModelRegistryItem(
             model_id=3,
@@ -39,7 +39,7 @@ def get_available_models(db: Session = Depends(get_db)):
             version="1.0.0",
             status="active",
             accuracy=0.946,
-            last_updated=datetime.utcnow(),
+            last_updated=datetime.now(timezone.utc),
         ),
     ]
 

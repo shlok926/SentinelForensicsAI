@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -70,5 +70,5 @@ def execute_predict(payload: PredictRequest, db: Session = Depends(get_db)):
         prediction_score=inference_res["prediction_score"],
         is_fake=inference_res["is_fake"],
         explanation=inference_res["details"],
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
     )

@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from ai_engine.datasets.duplicates import VideoDuplicateDetector
@@ -66,7 +66,7 @@ class DatasetReporter:
         # 4. Consolidate Data
         report_data = {
             "dataset_id": dataset_id,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "registry_metadata": {
                 "name": meta.name,
                 "version": meta.version,

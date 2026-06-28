@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -29,5 +29,5 @@ def generate_forensic_report(prediction_id: int, db: Session = Depends(get_db)):
         report_id=mock_report_id,
         report_path=f"{settings.REPORTS_DIR}/{report_filename}",
         download_url=f"/static/reports/{report_filename}",
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
     )

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
@@ -24,7 +24,7 @@ def get_prediction_history(
         model_type="multimodal",
         prediction_score=0.985,
         is_fake=True,
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
     )
     mock_item_2 = PredictionHistoryItem(
         prediction_id=2,
@@ -32,7 +32,7 @@ def get_prediction_history(
         model_type="video",
         prediction_score=0.012,
         is_fake=False,
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
     )
 
     return HistoryListResponse(success=True, total_records=2, data=[mock_item_1, mock_item_2])

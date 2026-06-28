@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
@@ -18,7 +18,7 @@ class UserModel(Base):
     hashed_password = Column(String(255), nullable=False)
     role = Column(String(50), default="analyst")  # admin, analyst, guest
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     videos = relationship("VideoModel", back_populates="uploader")
@@ -38,7 +38,7 @@ class VideoModel(Base):
     duration_seconds = Column(Float, nullable=True)
     sha256_hash = Column(String(64), unique=True, index=True, nullable=False)
     uploader_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    uploaded_at = Column(DateTime, default=datetime.utcnow)
+    uploaded_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     uploader = relationship("UserModel", back_populates="videos")
@@ -59,7 +59,7 @@ class PredictionModel(Base):
     prediction_score = Column(Float, nullable=False)  # Probability (0.0 to 1.0)
     is_fake = Column(Boolean, nullable=False)
     details_json = Column(Text, nullable=True)  # Full inference detail dict (JSON string)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     video = relationship("VideoModel", back_populates="predictions")
@@ -77,7 +77,7 @@ class ReportModel(Base):
     prediction_id = Column(Integer, ForeignKey("predictions.id"), nullable=False)
     report_path = Column(String(512), nullable=False)
     generated_by = Column(String(100), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relationships
     prediction = relationship("PredictionModel", back_populates="report")
@@ -95,7 +95,7 @@ class LogModel(Base):
     logger_name = Column(String(50), nullable=False)
     message = Column(Text, nullable=False)
     details_json = Column(Text, nullable=True)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 class ModelRegistryModel(Base):
@@ -111,7 +111,7 @@ class ModelRegistryModel(Base):
     status = Column(String(30), default="inactive")  # active, inactive, testing
     accuracy = Column(Float, nullable=True)
     path = Column(String(512), nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 class DatasetRegistryModel(Base):
@@ -127,4 +127,4 @@ class DatasetRegistryModel(Base):
     samples_count = Column(Integer, default=0)
     local_path = Column(String(512), nullable=True)
     registry_status = Column(String(30), default="unverified")  # verified, unverified, downloading
-    updated_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

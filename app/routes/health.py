@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 import torch
 from fastapi import APIRouter, Depends
@@ -32,7 +32,7 @@ def get_health(db: Session = Depends(get_db)):
         database_connected=database_connected,
         cuda_available=cuda_available,
         gpu_devices_count=gpu_devices_count,
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(timezone.utc),
     )
 
 
